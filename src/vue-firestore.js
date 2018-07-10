@@ -27,9 +27,13 @@ function defineReactive (vm, key, val) {
  */
 function collections ({ vm, key, source, resolve, reject }) {
   vm.$firestore[key] = source
-  let container = []
+  let container = null
   defineReactive(vm, key, container)
   source.onSnapshot((doc) => {
+    if(container === null) {
+      container = []
+      defineReactive(vm, key, container)
+    }
     doc.docChanges().forEach(snapshot => {
       switch (snapshot.type) {
         case 'added':
